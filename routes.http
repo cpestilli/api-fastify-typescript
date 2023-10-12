@@ -1,0 +1,24 @@
+POST  http://localhost:8080/videos
+Content-Type: application/json
+
+{
+  "title":"video 1",
+  "description": "novo video",
+  "duration": 100
+}
+
+###
+
+GET  http://localhost:8080/videos
+
+
+###
+
+PUT http://localhost:8080/videos/6736a0be-9bf2-41e5-b7e7-5524989e8394
+Content-Type: application/json
+
+{
+  "title":"video 2",
+  "description": "editado video",
+  "duration": 200
+}
