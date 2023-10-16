@@ -1,4 +1,4 @@
-FROM node:18.18.0-alpine AS build
+FROM node:18.12.1-alpine AS build
 
 # Create app directory
 WORKDIR /app
@@ -9,13 +9,16 @@ COPY package*.json ./
 # Install certificates
 #RUN apk add --no-cache ca-certificates
 
-RUN npm install
+RUN npm ci
 
 # If you are building your code for production
 # RUN npm ci --omit=dev
 # Bundle app source
 
 COPY . .
-EXPOSE 8080
+
+RUN npm run build
+
+EXPOSE 3000
 
 CMD ["npm", "start"]

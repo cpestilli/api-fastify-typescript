@@ -1,14 +1,20 @@
 version: '3.5'
 services:
-  api1: # API - Instância 01
-    image: rinha-backend
-    hostname: api1
+  backend: # API - Instância 01
+    image: fastify-typescript
+    build: .
+    hostname: backend
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_DB: postgres
+#      HOSTNAME: database
     networks:
-       - rinha-network
-#    depends_on:
-#      - db
-    expose:
-      - "8080"
+       - network
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
     deploy:
       resources:
         limits:
@@ -43,14 +49,33 @@ services:
   #         cpus: '0.25'
   #         memory: '0.5GB'
 
-  # db: # Banco de dados
-  #  image: postgres
-  #  deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.75'
-  #         memory: '1.5GB'
+  db: # Banco de dados
+   image: postgres
+   hostname: database
+ #  command: postgres -c config_file=/docker-entrypoint-initdb.d/postgresql.conf
+   networks:
+    - network
+   environment:
+    PGUSER: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: 1234
+    POSTGRES_DB: postgres
+   healthcheck:
+    test: ["CMD-SHELL", "pg_isready", "-h localhost", "-p 5432"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+   ports:
+    - 5432:5432
+   volumes:
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#    - ./postgresql.conf:/docker-entrypoint-initdb.d/postgresql.conf
+   deploy:
+    resources:
+      limits:
+        cpus: '0.75'
+        memory: '0.5GB'
 
-  networks:
-    rinha-network:
-      driver: bridge
+networks:
+  network:
+    driver: bridge

@@ -1,21 +1,35 @@
 import fastify from 'fastify'
-import { Database, Ivideo } from './database'
+import { DatabasePostgres, Ivideo } from './database-postgres'
 
-const server = fastify()
-const database = new Database();
+const server = fastify({
+    logger: true
+  });
 
-server.get('/videos', () => {
-    console.log('teste');
-    const videos = database.list();
+const database = new DatabasePostgres();
+ try{
+    database.checkPostges();
+ }catch(e){
+    console.error(e);
+ }
+
+// Declare a route
+server.get('/ping', async (request, reply) => {
+return { pong: 'it worked!' }
+})
+
+server.get('/videos', async (request) => {
+    const search = request.query.search;
+    //console.log('entrou get -> search'+ search);
+    const videos = database.list(search);
     return videos ;
 })
 
-server.post('/videos', (request, reply) => {
+server.post('/videos', async (request, reply) => {
     const  body = request.body as Ivideo;
     
     console.log(body);
 
-    database.create({
+   await database.create({
         title: body.title,
         description: body.description,
         duration: body.duration
@@ -53,13 +67,25 @@ server.delete('/videos/:id', async  (request, reply) => {
     return reply.status(200).send();
 })
 
-server.listen({ 
-    port: 8080 
-}, (err, address) => {
-  
+// Run the server!
+server.listen({ port: 3000, host: '0.0.0.0'}, (err, address) => {
     if (err) {
-    console.error(err)
-    process.exit(1)
-  }
-  console.log(`Server listening at ${address}`)
-})
+      console.error(err)
+      process.exit(1)
+    }
+    console.log(`Server listening at ${address}`)
+  })
+// const start = async () => {
+//     try {
+//         await server.listen({ port: 3000 })
+
+//         const address = server.server.address()
+//         const port = typeof address === 'string' ? address : address?.port
+
+//     } catch (err) {
+//         server.log.error(err)
+//         process.exit(1)
+//     }
+// }
+
+//   start()

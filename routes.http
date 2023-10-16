@@ -2,19 +2,19 @@ POST  http://localhost:8080/videos
 Content-Type: application/json
 
 {
-  "title":"video 1",
-  "description": "novo video",
+  "title":"video node",
+  "description": "novo node",
   "duration": 100
 }
 
 ###
 
-GET  http://localhost:8080/videos
+GET  http://localhost:8080/videos?search=node
 
 
 ###
 
-PUT http://localhost:8080/videos/6736a0be-9bf2-41e5-b7e7-5524989e8394
+PUT http://localhost:8080/videos/89b26f40-43f0-4ae3-be72-d9bc4faccf13
 Content-Type: application/json
 
 {
@@ -22,3 +22,8 @@ Content-Type: application/json
   "description": "editado video",
   "duration": 200
 }
+
+
+###
+
+DELETE http://localhost:8080/videos/4599c104-46ce-46cc-aea8-9da020909760
