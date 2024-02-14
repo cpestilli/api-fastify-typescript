@@ -1,5 +1,6 @@
 import fastify from 'fastify'
 import { DatabasePostgres, Ivideo } from './database-postgres'
+import { randomInt } from 'crypto';
 
 const server = fastify({
     logger: true
@@ -27,13 +28,13 @@ server.get('/videos', async (request) => {
 server.post('/videos', async (request, reply) => {
     const  body = request.body as Ivideo;
     
-    console.log(body);
+    //console.log(body);
 
+    const random = randomInt(1000);
    await database.create({
-        title: body.title,
-        description: body.description,
+        title: body.title + random,
+        description: body.description + random,
         duration: body.duration
-
     })
     
     return reply.status(201).send();
@@ -47,12 +48,11 @@ server.put('/videos/:id', (request, reply) => {
     const id = request.params.id;
     //console.log(id);
     const  body = request.body as Ivideo;
-
+    console.log("update------------->>"+id+ '-'+JSON.stringify(body));
     database.update(id, {
         title: body.title,
         description: body.description,
         duration: body.duration
-
     })
 
     return reply.status(204).send();
@@ -75,17 +75,3 @@ server.listen({ port: 3000, host: '0.0.0.0'}, (err, address) => {
     }
     console.log(`Server listening at ${address}`)
   })
-// const start = async () => {
-//     try {
-//         await server.listen({ port: 3000 })
-
-//         const address = server.server.address()
-//         const port = typeof address === 'string' ? address : address?.port
-
-//     } catch (err) {
-//         server.log.error(err)
-//         process.exit(1)
-//     }
-// }
-
-//   start()

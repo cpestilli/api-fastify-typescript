@@ -30,12 +30,19 @@ export class DatabasePostgres {
     
   }
 
-  public update(id: UUID, video:Ivideo){
+  public async update(id: UUID, video:Ivideo){
+    console.log("update------------->>"+id+ '-'+JSON.stringify(video));
+    return await sql `
+    update videos set ${
+      sql(video,'title','description', 'duration')
+    }
+    where videos.id = ${sql(id)}`
     
   }
 
   public delete(id:UUID){
-   
+      return sql`
+      delete from videos where id = ${sql(id)}`
   }
 }
 
